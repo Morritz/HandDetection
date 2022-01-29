@@ -1,0 +1,16 @@
+{
+  "name": "mediapipe-hand-detection",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^2.7.2"
+  },
+  "dependencies": {
+    "@mediapipe/camera_utils": "^0.3.1640029074",
+    "@mediapipe/hands": "^0.4.1635986972"
+  }
+}
