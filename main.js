@@ -18,6 +18,19 @@ function isDescending(arr) {
   });
 }
 
+function fillTextMultiLine(ctx, text, x, y) {
+  var lineHeight = ctx.measureText("M").width * 1.2;
+  var lines = text.split("\n");
+  for (var i = 0; i < lines.length; ++i) {
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 3;
+    ctx.strokeText(lines[i], x, y);
+    ctx.lineWidth = 1;
+    ctx.fillText(lines[i], x, y);
+    y += lineHeight;
+  }
+}
+
 const handDetection = new Hands({
   locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
@@ -69,20 +82,44 @@ function detectLike(landmarks, isRight) {
   }
   return false;
 }
-let once = false;
+
+function detectFingers(landmarks) {
+  const fingers = [
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [9, 10, 11, 12],
+    [13, 14, 15, 16],
+    [17, 18, 19, 20],
+  ];
+
+  const fingersY = fingers.map((finger) => {
+    return finger.map((index) => landmarks[index].y);
+  });
+
+  const result = {
+    kciuk: isDescending(fingersY[0]),
+    wskazujacy: isDescending(fingersY[1]),
+    srodkowy: isDescending(fingersY[2]),
+    serdeczny: isDescending(fingersY[3]),
+    maly: isDescending(fingersY[4]),
+  };
+  return result;
+}
+// let once = false;
 
 handDetection.onResults((results) => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let fingerInfo = "";
   for (const [index, hand] of results.multiHandLandmarks.entries()) {
     for (const [index, landmark] of hand.entries()) {
       const x = landmark.x * canvas.width;
       const y = landmark.y * canvas.height;
+      ctx.fillStyle = "blue";
       ctx.font = "20px Arial";
       ctx.fillText(index, x + 5, y + -5);
 
       ctx.beginPath();
       ctx.arc(x, y, 5, 0, 2 * Math.PI);
-      ctx.fillStyle = "blue";
       ctx.fill();
       ctx.stroke();
     }
@@ -96,6 +133,14 @@ handDetection.onResults((results) => {
     if (result1) {
       ctx.drawImage(LikeGestureImage, 0, 0, 200, 200);
     }
+    const result2 = detectFingers(hand);
+    fingerInfo += `Ręka - index ${index} \n`;
+    for (const finger in result2) {
+      fingerInfo += `${finger}: ${result2[finger] ? "TAK" : "NIE"} \n`;
+    }
+    fingerInfo += "\n";
+    ctx.fillStyle = "white";
+    fillTextMultiLine(ctx, fingerInfo, 25, 300);
   }
 });
 
