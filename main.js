@@ -1,6 +1,6 @@
 import "./style.css";
-import mediapipe from "@mediapipe/hands";
-import { Camera } from "@mediapipe/camera_utils";
+// import mediapipe from "@mediapipe/hands";
+// import { Camera } from "@mediapipe/camera_utils";
 
 function isAscending(arr) {
   return arr.every(function (x, i) {
@@ -14,7 +14,7 @@ function isDescending(arr) {
   });
 }
 
-const handDetection = new mediapipe.Hands({
+const handDetection = new Hands({
   locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
   },
@@ -86,7 +86,7 @@ handDetection.onResults((results) => {
     if (!once && result1) {
       once = true;
       const link = document.createElement("a");
-      link.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+      link.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ&autoplay=1";
       link.click();
     }
   }
