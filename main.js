@@ -2,6 +2,10 @@ import "./style.css";
 // import mediapipe from "@mediapipe/hands";
 // import { Camera } from "@mediapipe/camera_utils";
 
+const LikeGestureImage = new Image();
+LikeGestureImage.src =
+  "https://png.pngtree.com/png-vector/20201227/ourlarge/pngtree-thumb-up-gesture-png-image_2657834.jpg";
+
 function isAscending(arr) {
   return arr.every(function (x, i) {
     return i === 0 || x >= arr[i - 1];
@@ -32,9 +36,8 @@ function detectLike(landmarks, isRight) {
   const rest = landmarks.filter((_, index) => {
     return index != 3 && index != 4;
   });
-  const minOfRest = Math.min.apply(
-    Math,
-    rest.map(function (o) {
+  const minOfRest = Math.min(
+    ...rest.map(function (o) {
       return o.y;
     })
   );
@@ -57,10 +60,11 @@ function detectLike(landmarks, isRight) {
           return landmarks[val].x;
         });
         const checkKnuckles = isRightHand ? isAscending : isDescending;
-        if (checkKnuckles(points)) {
-          return true;
+        if (!checkKnuckles(points)) {
+          return false;
         }
       }
+      return true;
     }
   }
   return false;
@@ -83,11 +87,14 @@ handDetection.onResults((results) => {
       ctx.stroke();
     }
     const result1 = detectLike(hand, results.multiHandedness[index].index);
-    if (!once && result1) {
-      once = true;
-      const link = document.createElement("a");
-      link.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ&autoplay=1";
-      link.click();
+    // if (!once && result1) {
+    //   once = true;
+    //   const link = document.createElement("a");
+    //   link.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ&autoplay=1";
+    //   link.click();
+    // }
+    if (result1) {
+      ctx.drawImage(LikeGestureImage, 0, 0, 200, 200);
     }
   }
 });
